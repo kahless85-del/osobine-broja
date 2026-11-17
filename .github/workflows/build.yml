@@ -7,16 +7,16 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Preuzimanje koda iz repozitorija
         uses: actions/checkout@v4
 
-      - name: Postavljanje Pythona
+      - name: Postavljanje Pythona 3.9
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.9'
 
       - name: Instalacija sistemskih ovisnosti za Buildozer
         run: |
@@ -26,7 +26,7 @@ jobs:
             git \
             zip \
             unzip \
-            openjdk-17-jdk \
+            openjdk-11-jdk \
             autoconf \
             libtool \
             pkg-config \
@@ -39,10 +39,11 @@ jobs:
             libssl-dev \
             automake
 
-      - name: Instalacija Buildozera i Cythona
+      - name: Instalacija Buildozera, Cythona i setuptools
         run: |
-          pip install --upgrade pip
-          pip install buildozer cython==0.29.36
+          python -m pip install --upgrade pip
+          pip install "setuptools<=68.2.2"
+          pip install cython==0.29.33 buildozer
 
       - name: Kompajliranje APK datoteke
         run: |
