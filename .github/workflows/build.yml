@@ -1,0 +1,55 @@
+name: Izrada Android APK-a
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Preuzimanje koda iz repozitorija
+        uses: actions/checkout@v4
+
+      - name: Postavljanje Pythona
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Instalacija sistemskih ovisnosti za Buildozer
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            git \
+            zip \
+            unzip \
+            openjdk-17-jdk \
+            autoconf \
+            libtool \
+            pkg-config \
+            zlib1g-dev \
+            libncurses5-dev \
+            libncursesw5-dev \
+            libtinfo6 \
+            cmake \
+            libffi-dev \
+            libssl-dev \
+            automake
+
+      - name: Instalacija Buildozera i Cythona
+        run: |
+          pip install --upgrade pip
+          pip install buildozer cython==0.29.36
+
+      - name: Kompajliranje APK datoteke
+        run: |
+          yes | buildozer -v android debug
+
+      - name: Spremanje gotovog APK-a za preuzimanje
+        uses: actions/upload-artifact@v4
+        with:
+          name: OsobineBroja-APK
+          path: bin/*.apk
